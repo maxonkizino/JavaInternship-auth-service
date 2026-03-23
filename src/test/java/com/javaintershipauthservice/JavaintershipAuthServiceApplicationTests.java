@@ -2,9 +2,11 @@ package com.javaintershipauthservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
-class JavaintershipAuthServiceApplicationTests {
+@ActiveProfiles("test")
+class JavaintershipAuthServiceApplicationTests extends PostgresIntegrationTestBase {
 
     @Test
     void contextLoads() {
