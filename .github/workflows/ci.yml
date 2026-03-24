@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ main, features/user-service ]
+    branches: [ main, features/auth-service ]
   pull_request:
-    branches: [ main, features/user-service ]
+    branches: [ main, features/auth-service ]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -12,35 +12,18 @@ concurrency:
 
 env:
   JAVA_VERSION: '21'
-  DOCKER_IMAGE: maxononion/javainternship
+  DOCKER_IMAGE: maxononion/JavaInternship-auth-service
+  JWT_SECRET: ${{ secrets.JWT_SECRET }}
+  ACCESS_TOKEN_EXPIRATION_MINUTES: ${{ secrets.ACCESS_TOKEN_EXPIRATION_MINUTES }}
+  REFRESH_TOKEN_EXPIRATION_MINUTES: ${{ secrets.REFRESH_TOKEN_EXPIRATION_MINUTES }}
 
 permissions:
   contents: read
 
 jobs:
-  build-test-sonar:
-    name: Build, Test & Sonar
+  build:
+    name: Build
     runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:17-alpine
-        env:
-          POSTGRES_DB: postgres
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: root
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd="pg_isready -U postgres"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
-
-      redis:
-        image: redis:7-alpine
-        ports:
-          - 6379:6379
 
     steps:
       - name: Checkout repository
@@ -55,8 +38,58 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Build & test (Maven verify)
-        run: mvn -B clean verify -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false
+      - name: Build package (skip tests)
+        run: mvn -B clean package -DskipTests -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false
+
+      - name: Upload JAR artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-jar
+          path: target/*.jar
+          retention-days: 1
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Run tests
+        env:
+          JWT_SECRET: ${{ env.JWT_SECRET }}
+          ACCESS_TOKEN_EXPIRATION_MINUTES: ${{ env.ACCESS_TOKEN_EXPIRATION_MINUTES }}
+          REFRESH_TOKEN_EXPIRATION_MINUTES: ${{ env.REFRESH_TOKEN_EXPIRATION_MINUTES }}
+        run: mvn -B test -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false
+
+  sonar:
+    name: SonarQube analysis
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: 'maven'
 
       - name: SonarQube analysis
         env:
@@ -68,18 +101,11 @@ jobs:
           -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
           -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
 
-      - name: Upload JAR artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-jar
-          path: target/*.jar
-          retention-days: 1
-
   docker:
     name: Build & Push Docker image to Docker Hub
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
-    needs: build-test-sonar
+    needs: [build, test, sonar]
     permissions:
       contents: read
       packages: write
