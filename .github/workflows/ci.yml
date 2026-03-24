@@ -9,7 +9,7 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
-
+#d
 env:
   JAVA_VERSION: '21'
   DOCKER_IMAGE: maxononion/JavaInternship-auth-service
