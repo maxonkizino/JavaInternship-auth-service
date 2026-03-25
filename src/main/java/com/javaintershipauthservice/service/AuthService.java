@@ -12,7 +12,6 @@ import com.javaintershipauthservice.model.User;
 import com.javaintershipauthservice.repository.RoleRepository;
 import com.javaintershipauthservice.repository.UserRepository;
 import com.javaintershipauthservice.security.JwtTokenType;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -72,7 +71,7 @@ public class AuthService {
         Roles role = request.role() != null ? request.role() : Roles.ROLE_USER;
         Role userRole = new Role();
         userRole.setUser(saved);
-        userRole.setRole(role);
+        userRole.setRoleValue(role);
         roleRepository.save(userRole);
 
         return saved.getUserId();
@@ -89,8 +88,6 @@ public class AuthService {
                     payload.type().name(),
                     expiresAt
             );
-        } catch (ExpiredJwtException e) {
-            return new ValidateTokenResponse(false, null, null, null, null);
         } catch (JwtException | IllegalArgumentException e) {
             return new ValidateTokenResponse(false, null, null, null, null);
         }
@@ -110,7 +107,7 @@ public class AuthService {
         if (roles == null || roles.isEmpty()) {
             return Roles.ROLE_USER;
         }
-        return roles.get(0).getRole();
+        return roles.get(0).getRoleValue();
     }
 }
 

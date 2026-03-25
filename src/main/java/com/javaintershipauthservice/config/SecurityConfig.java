@@ -56,7 +56,7 @@ public class SecurityConfig {
             RestAccessDeniedHandler accessDeniedHandler,
             CsrfTokenRepository csrfTokenRepository,
             RequestMatcher csrfIgnoredRequestMatcher
-    ) throws Exception {
+    ) {
 
         http
                 .cors(Customizer.withDefaults())

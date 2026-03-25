@@ -20,7 +20,7 @@ public class Role {
 
     @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
-    private Roles role;
+    private Roles roleValue;
 
 
 }

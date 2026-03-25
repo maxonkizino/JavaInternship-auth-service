@@ -46,9 +46,9 @@ class JwtServiceTest {
         JwtProperties properties = new JwtProperties();
         properties.setSecret("short-secret");
 
-        JwtService jwtService = new JwtService(properties);
+        JwtService testJwtService = new JwtService(properties);
 
-        assertThrows(IllegalArgumentException.class, jwtService::init);
+        assertThrows(IllegalArgumentException.class, testJwtService::init);
     }
 
     @Configuration

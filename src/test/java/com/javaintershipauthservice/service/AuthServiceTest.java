@@ -32,7 +32,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -61,7 +60,7 @@ class AuthServiceTest {
         user.setActive(true);
 
         Role role = new Role();
-        role.setRole(Roles.ROLE_ADMIN);
+        role.setRoleValue(Roles.ROLE_ADMIN);
 
         when(userRepository.findByLogin("max")).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("secret", "hashed")).thenReturn(true);
@@ -104,7 +103,7 @@ class AuthServiceTest {
 
         ArgumentCaptor<Role> roleCaptor = ArgumentCaptor.forClass(Role.class);
         verify(roleRepository).save(roleCaptor.capture());
-        assertEquals(Roles.ROLE_USER, roleCaptor.getValue().getRole());
+        assertEquals(Roles.ROLE_USER, roleCaptor.getValue().getRoleValue());
         assertNotNull(roleCaptor.getValue().getUser());
     }
 
@@ -119,7 +118,8 @@ class AuthServiceTest {
         when(userRepository.findByLogin("max")).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("bad", "hashed")).thenReturn(false);
 
-        assertThrows(BadCredentialsException.class, () -> authService.login(new LoginRequest("max", "bad")));
+        LoginRequest badRequest = new LoginRequest("max", "bad");
+        assertThrows(BadCredentialsException.class, () -> authService.login(badRequest));
     }
 
     @Test
@@ -144,7 +144,7 @@ class AuthServiceTest {
 
         assertEquals("new-access", response.accessToken());
         assertEquals("new-refresh", response.refreshToken());
-        verify(jwtService).ensureType(eq(payload), eq(JwtTokenType.REFRESH));
+        verify(jwtService).ensureType(payload, JwtTokenType.REFRESH);
     }
 }
 

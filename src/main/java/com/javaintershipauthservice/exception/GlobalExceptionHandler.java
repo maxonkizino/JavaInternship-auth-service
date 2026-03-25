@@ -15,12 +15,21 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private static final String KEY_ERROR = "error";
+    private static final String KEY_MESSAGE = "message";
+    private static final String KEY_FIELDS = "fields";
+
+    private static final String ERROR_UNAUTHORIZED = "unauthorized";
+    private static final String ERROR_BAD_REQUEST = "bad_request";
+    private static final String ERROR_VALIDATION_FAILED = "validation_failed";
+    private static final String ERROR_INTERNAL = "internal_error";
+
     @ExceptionHandler(BadCredentialsException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public Map<String, Object> handleBadCredentials(BadCredentialsException e) {
         return Map.of(
-                "error", "unauthorized",
-                "message", e.getMessage()
+                KEY_ERROR, ERROR_UNAUTHORIZED,
+                KEY_MESSAGE, e.getMessage()
         );
     }
 
@@ -28,8 +37,8 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, Object> handleBadRequest(RuntimeException e) {
         return Map.of(
-                "error", "bad_request",
-                "message", e.getMessage()
+                KEY_ERROR, ERROR_BAD_REQUEST,
+                KEY_MESSAGE, e.getMessage()
         );
     }
 
@@ -41,9 +50,9 @@ public class GlobalExceptionHandler {
             errors.put(fieldError.getField(), fieldError.getDefaultMessage());
         }
         return Map.of(
-                "error", "validation_failed",
-                "message", "Request validation failed",
-                "fields", errors
+                KEY_ERROR, ERROR_VALIDATION_FAILED,
+                KEY_MESSAGE, "Request validation failed",
+                KEY_FIELDS, errors
         );
     }
 
@@ -51,8 +60,8 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Map<String, Object> handleUnknown(Exception e) {
         return Map.of(
-                "error", "internal_error",
-                "message", e.getMessage()
+                KEY_ERROR, ERROR_INTERNAL,
+                KEY_MESSAGE, e.getMessage()
         );
     }
 }
