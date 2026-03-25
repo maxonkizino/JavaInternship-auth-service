@@ -12,6 +12,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -65,7 +66,24 @@ public class SecurityConfig {
                 )
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        
+
+                        .requestMatchers(HttpMethod.GET, "/users/*").hasAnyAuthority("ROLE_USER")
+                        .requestMatchers(HttpMethod.PUT, "/users/*").hasAnyAuthority("ROLE_USER")
+
+                        .requestMatchers(HttpMethod.GET, "/payment-cards/by-user/*").hasAnyAuthority( "ROLE_USER")
+                        .requestMatchers(HttpMethod.GET, "/payment-cards/by-number/*").hasAnyAuthority("ROLE_USER")
+                        .requestMatchers(HttpMethod.GET, "/payment-cards/*").hasAnyAuthority("ROLE_USER")
+
+                        .requestMatchers(HttpMethod.POST, "/payment-cards").hasAnyAuthority( "ROLE_USER")
+                        .requestMatchers(HttpMethod.PUT, "/payment-cards/*").hasAnyAuthority("ROLE_USER")
+                        .requestMatchers(HttpMethod.DELETE, "/payment-cards/*").hasAnyAuthority("ROLE_USER")
+                        .requestMatchers(HttpMethod.PATCH, "/payment-cards/*/status").hasAnyAuthority("ROLE_USER")
+
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/users/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers("/payment-cards/**").hasAuthority("ROLE_ADMIN")
+
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex

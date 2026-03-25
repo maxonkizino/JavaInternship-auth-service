@@ -28,7 +28,7 @@ public class AuthController {
         return authService.login(request);
     }
 
-    @PostMapping("/register")
+    @PostMapping("/credentials")
     public Long register(@Valid @RequestBody RegisterRequest request) {
         return authService.register(request);
     }
