@@ -24,4 +24,7 @@ jwt:
   access-token-expiration-minutes: ${ACCESS_TOKEN_EXPIRATION_MINUTES}
   refresh-token-expiration-minutes: ${REFRESH_TOKEN_EXPIRATION_MINUTES}
 
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS}
+
 

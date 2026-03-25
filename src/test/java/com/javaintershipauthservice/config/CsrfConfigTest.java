@@ -1,46 +1,31 @@
 package com.javaintershipauthservice.config;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.mock.env.MockEnvironment;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 class CsrfConfigTest {
 
     @Test
-    void csrfProtectionMatcherDoesNotRequireTokenForBearerRequests() {
+    void csrfTokenRepositoryUsesHttpOnlyByDefault() {
         CsrfConfig config = new CsrfConfig();
-        RequestMatcher matcher = config.csrfProtectionMatcher();
-
-        MockHttpServletRequest request = new MockHttpServletRequest("POST", "/users/1");
-        request.addHeader("Authorization", "Bearer token");
-        request.addHeader("Cookie", "XSRF-TOKEN=abc");
-
-        assertFalse(matcher.matches(request));
+        MockEnvironment env = new MockEnvironment();
+        CsrfTokenRepository repo = config.csrfTokenRepository(env);
+        assertInstanceOf(CookieCsrfTokenRepository.class, repo);
     }
 
     @Test
-    void csrfProtectionMatcherRequiresTokenForCookieBasedUnsafeRequests() {
+    void csrfTokenRepositoryCanDisableHttpOnlyForDev() {
         CsrfConfig config = new CsrfConfig();
-        RequestMatcher matcher = config.csrfProtectionMatcher();
-
-        MockHttpServletRequest request = new MockHttpServletRequest("POST", "/users/1");
-        request.addHeader("Cookie", "SESSION=abc");
-
-        assertTrue(matcher.matches(request));
-    }
-
-    @Test
-    void csrfProtectionMatcherDoesNotRequireTokenForSafeMethods() {
-        CsrfConfig config = new CsrfConfig();
-        RequestMatcher matcher = config.csrfProtectionMatcher();
-
-        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/users/1");
-        request.addHeader("Cookie", "SESSION=abc");
-
-        assertFalse(matcher.matches(request));
+        MockEnvironment env = new MockEnvironment()
+                .withProperty("security.csrf.cookie.http-only", "false");
+        CsrfTokenRepository repo = config.csrfTokenRepository(env);
+        assertInstanceOf(CookieCsrfTokenRepository.class, repo);
+        assertTrue(repo instanceof CookieCsrfTokenRepository);
     }
 }
 

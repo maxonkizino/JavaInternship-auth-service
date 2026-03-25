@@ -8,6 +8,8 @@ import com.javaintershipauthservice.dto.request.ValidateTokenRequest;
 import com.javaintershipauthservice.dto.response.ValidateTokenResponse;
 import com.javaintershipauthservice.service.AuthService;
 import jakarta.validation.Valid;
+import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,6 +43,11 @@ public class AuthController {
     @PostMapping("/refresh")
     public TokenResponse refresh(@Valid @RequestBody RefreshTokenRequest request) {
         return authService.refresh(request);
+    }
+
+    @GetMapping("/csrf")
+    public CsrfToken csrf(CsrfToken csrfToken) {
+        return csrfToken;
     }
 }
 

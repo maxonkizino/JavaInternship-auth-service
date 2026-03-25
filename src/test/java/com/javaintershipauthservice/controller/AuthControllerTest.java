@@ -12,6 +12,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.web.csrf.DefaultCsrfToken;
+import org.springframework.security.web.csrf.CsrfToken;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
@@ -72,6 +74,12 @@ class AuthControllerTest {
         TokenResponse actual = controller.refresh(request);
         assertEquals(expected, actual);
         verify(authService).refresh(request);
+    }
+
+    @Test
+    void csrfReturnsProvidedToken() {
+        CsrfToken token = new DefaultCsrfToken("X-CSRF-TOKEN", "_csrf", "value");
+        assertEquals(token, controller.csrf(token));
     }
 }
 

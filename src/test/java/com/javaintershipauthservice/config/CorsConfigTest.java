@@ -1,6 +1,7 @@
 package com.javaintershipauthservice.config;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.mock.env.MockEnvironment;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -14,13 +15,15 @@ class CorsConfigTest {
     @Test
     void corsConfigurationSourceRegistersDefaults() {
         CorsConfig config = new CorsConfig();
-        CorsConfigurationSource source = config.corsConfigurationSource();
+        MockEnvironment env = new MockEnvironment()
+                .withProperty("cors.allowed-origins", "http://localhost:8080");
+        CorsConfigurationSource source = config.corsConfigurationSource(env);
 
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "/any");
         CorsConfiguration cors = source.getCorsConfiguration(request);
 
         assertNotNull(cors);
-        assertTrue(cors.getAllowedOriginPatterns().contains("*"));
+        assertTrue(cors.getAllowedOrigins().contains("http://localhost:8080"));
         assertTrue(cors.getAllowedMethods().contains("GET"));
         assertTrue(cors.getAllowedMethods().contains("POST"));
         assertTrue(cors.getAllowedHeaders().contains("Authorization"));
