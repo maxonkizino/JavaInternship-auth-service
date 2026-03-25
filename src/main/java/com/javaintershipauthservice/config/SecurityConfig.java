@@ -27,6 +27,16 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableConfigurationProperties(JwtProperties.class)
 public class SecurityConfig {
 
+    private static final String ROLE_USER = "ROLE_USER";
+    private static final String ROLE_ADMIN = "ROLE_ADMIN";
+
+    private static final String USERS_ID = "/users/*";
+    private static final String PAYMENT_CARDS = "/payment-cards";
+    private static final String PAYMENT_CARDS_ID = "/payment-cards/*";
+    private static final String PAYMENT_CARDS_ID_STATUS = "/payment-cards/*/status";
+    private static final String PAYMENT_CARDS_BY_USER = "/payment-cards/by-user/*";
+    private static final String PAYMENT_CARDS_BY_NUMBER = "/payment-cards/by-number/*";
+
     @Bean
     public PasswordEncoder passwordEncoder() {
 
@@ -67,22 +77,21 @@ public class SecurityConfig {
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         
+                        .requestMatchers(HttpMethod.GET, USERS_ID).hasAnyAuthority(ROLE_USER)
+                        .requestMatchers(HttpMethod.PUT, USERS_ID).hasAnyAuthority(ROLE_USER)
 
-                        .requestMatchers(HttpMethod.GET, "/users/*").hasAnyAuthority("ROLE_USER")
-                        .requestMatchers(HttpMethod.PUT, "/users/*").hasAnyAuthority("ROLE_USER")
+                        .requestMatchers(HttpMethod.GET, PAYMENT_CARDS_BY_USER).hasAnyAuthority(ROLE_USER)
+                        .requestMatchers(HttpMethod.GET, PAYMENT_CARDS_BY_NUMBER).hasAnyAuthority(ROLE_USER)
+                        .requestMatchers(HttpMethod.GET, PAYMENT_CARDS_ID).hasAnyAuthority(ROLE_USER)
 
-                        .requestMatchers(HttpMethod.GET, "/payment-cards/by-user/*").hasAnyAuthority( "ROLE_USER")
-                        .requestMatchers(HttpMethod.GET, "/payment-cards/by-number/*").hasAnyAuthority("ROLE_USER")
-                        .requestMatchers(HttpMethod.GET, "/payment-cards/*").hasAnyAuthority("ROLE_USER")
-
-                        .requestMatchers(HttpMethod.POST, "/payment-cards").hasAnyAuthority( "ROLE_USER")
-                        .requestMatchers(HttpMethod.PUT, "/payment-cards/*").hasAnyAuthority("ROLE_USER")
-                        .requestMatchers(HttpMethod.DELETE, "/payment-cards/*").hasAnyAuthority("ROLE_USER")
-                        .requestMatchers(HttpMethod.PATCH, "/payment-cards/*/status").hasAnyAuthority("ROLE_USER")
+                        .requestMatchers(HttpMethod.POST, PAYMENT_CARDS).hasAnyAuthority(ROLE_USER)
+                        .requestMatchers(HttpMethod.PUT, PAYMENT_CARDS_ID).hasAnyAuthority(ROLE_USER)
+                        .requestMatchers(HttpMethod.DELETE, PAYMENT_CARDS_ID).hasAnyAuthority(ROLE_USER)
+                        .requestMatchers(HttpMethod.PATCH, PAYMENT_CARDS_ID_STATUS).hasAnyAuthority(ROLE_USER)
 
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/users/**").hasAuthority("ROLE_ADMIN")
-                        .requestMatchers("/payment-cards/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers("/users/**").hasAuthority(ROLE_ADMIN)
+                        .requestMatchers("/payment-cards/**").hasAuthority(ROLE_ADMIN)
 
                         .anyRequest().authenticated()
                 )
