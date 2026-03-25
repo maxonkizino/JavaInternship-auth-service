@@ -10,15 +10,37 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class CsrfConfigTest {
 
     @Test
-    void csrfIgnoredRequestMatcherIgnoresAuthPaths() {
+    void csrfProtectionMatcherDoesNotRequireTokenForBearerRequests() {
         CsrfConfig config = new CsrfConfig();
-        RequestMatcher matcher = config.csrfIgnoredRequestMatcher();
+        RequestMatcher matcher = config.csrfProtectionMatcher();
 
-        MockHttpServletRequest authRequest = new MockHttpServletRequest("POST", "/auth/login");
-        MockHttpServletRequest otherRequest = new MockHttpServletRequest("POST", "/users/1");
+        MockHttpServletRequest request = new MockHttpServletRequest("POST", "/users/1");
+        request.addHeader("Authorization", "Bearer token");
+        request.addHeader("Cookie", "XSRF-TOKEN=abc");
 
-        assertTrue(matcher.matches(authRequest));
-        assertFalse(matcher.matches(otherRequest));
+        assertFalse(matcher.matches(request));
+    }
+
+    @Test
+    void csrfProtectionMatcherRequiresTokenForCookieBasedUnsafeRequests() {
+        CsrfConfig config = new CsrfConfig();
+        RequestMatcher matcher = config.csrfProtectionMatcher();
+
+        MockHttpServletRequest request = new MockHttpServletRequest("POST", "/users/1");
+        request.addHeader("Cookie", "SESSION=abc");
+
+        assertTrue(matcher.matches(request));
+    }
+
+    @Test
+    void csrfProtectionMatcherDoesNotRequireTokenForSafeMethods() {
+        CsrfConfig config = new CsrfConfig();
+        RequestMatcher matcher = config.csrfProtectionMatcher();
+
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/users/1");
+        request.addHeader("Cookie", "SESSION=abc");
+
+        assertFalse(matcher.matches(request));
     }
 }
 

@@ -10,3 +10,8 @@ jwt:
   access-token-expiration-minutes: 15
   refresh-token-expiration-minutes: 10080
 
+security:
+  csrf:
+    cookie:
+      http-only: false
+

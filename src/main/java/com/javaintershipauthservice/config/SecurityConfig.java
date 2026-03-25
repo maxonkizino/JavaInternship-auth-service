@@ -65,14 +65,14 @@ public class SecurityConfig {
             RestAuthenticationEntryPoint entryPoint,
             RestAccessDeniedHandler accessDeniedHandler,
             CsrfTokenRepository csrfTokenRepository,
-            RequestMatcher csrfIgnoredRequestMatcher
+            RequestMatcher csrfProtectionMatcher
     ) {
 
         http
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf
                         .csrfTokenRepository(csrfTokenRepository)
-                        .ignoringRequestMatchers(csrfIgnoredRequestMatcher)
+                        .requireCsrfProtectionMatcher(csrfProtectionMatcher)
                 )
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
