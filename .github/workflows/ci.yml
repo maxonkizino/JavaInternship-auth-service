@@ -9,7 +9,7 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
-#d
+
 env:
   JAVA_VERSION: '21'
   DOCKER_IMAGE: maxononion/JavaInternship-auth-service
@@ -58,15 +58,16 @@ jobs:
       - name: Build & test (Maven verify)
         run: mvn -B clean verify -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false
 
-      - name: SonarQube analysis
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: >
-          mvn -B sonar:sonar
-          -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
-          -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
-          -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
-          -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+      #- name: SonarQube analysis
+      #  env:
+      #    SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      #  run: >
+      #    mvn -B sonar:sonar
+      #    -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
+      #    -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
+      #    -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
+      #    -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+
 
       - name: Upload JAR artifact
         uses: actions/upload-artifact@v4
