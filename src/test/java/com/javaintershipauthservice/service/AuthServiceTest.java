@@ -78,7 +78,7 @@ class AuthServiceTest {
 
     @Test
     void registerSuccessStoresEncodedPasswordAndDefaultRole() {
-        RegisterRequest request = new RegisterRequest(777L, "new_user", "raw", "u@test.com", null);
+        RegisterRequest request = new RegisterRequest(777L, "new_user", "raw", "u@test.com");
 
         when(userRepository.existsByUserId(777L)).thenReturn(false);
         when(userRepository.existsByLogin("new_user")).thenReturn(false);

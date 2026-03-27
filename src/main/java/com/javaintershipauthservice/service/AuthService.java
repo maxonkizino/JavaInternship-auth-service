@@ -68,10 +68,9 @@ public class AuthService {
 
         User saved = userRepository.save(user);
 
-        Roles role = request.role() != null ? request.role() : Roles.ROLE_USER;
         Role userRole = new Role();
         userRole.setUser(saved);
-        userRole.setRoleValue(role);
+        userRole.setRoleValue(Roles.ROLE_USER);
         roleRepository.save(userRole);
 
         return saved.getUserId();

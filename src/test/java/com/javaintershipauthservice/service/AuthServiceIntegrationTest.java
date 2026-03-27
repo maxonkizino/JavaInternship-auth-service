@@ -48,8 +48,7 @@ class AuthServiceIntegrationTest extends PostgresIntegrationTestBase {
                 1001L,
                 "integration_user",
                 "secret",
-                "integration@test.com",
-                Roles.ROLE_USER
+                "integration@test.com"
         );
 
         Long createdUserId = authService.register(registerRequest);

@@ -42,7 +42,7 @@ class AuthControllerTest {
 
     @Test
     void registerDelegatesToAuthService() {
-        RegisterRequest request = new RegisterRequest(777L, "login", "password", "u@test.com", null);
+        RegisterRequest request = new RegisterRequest(777L, "login", "password", "u@test.com");
         Long expectedUserId = 777L;
 
         when(authService.register(request)).thenReturn(expectedUserId);
