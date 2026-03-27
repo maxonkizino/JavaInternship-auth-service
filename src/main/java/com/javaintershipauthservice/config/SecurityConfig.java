@@ -29,12 +29,11 @@ public class SecurityConfig {
     private static final String ROLE_USER = "ROLE_USER";
     private static final String ROLE_ADMIN = "ROLE_ADMIN";
 
-    private static final String USERS_ID = "/users/*";
-    private static final String PAYMENT_CARDS = "/payment-cards";
-    private static final String PAYMENT_CARDS_ID = "/payment-cards/*";
-    private static final String PAYMENT_CARDS_ID_STATUS = "/payment-cards/*/status";
-    private static final String PAYMENT_CARDS_BY_USER = "/payment-cards/by-user/*";
-    private static final String PAYMENT_CARDS_BY_NUMBER = "/payment-cards/by-number/*";
+    private static final String API_USERS = "/api/users";
+    private static final String API_USERS_ID = "/api/users/*";
+    private static final String API_USERS_ID_STATUS = "/api/users/*/status";
+
+    private static final String API_PAYMENT_CARDS = "/api/payment-cards";
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -73,24 +72,18 @@ public class SecurityConfig {
                 )
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        
-                        .requestMatchers(HttpMethod.GET, USERS_ID).hasAnyAuthority(ROLE_USER,ROLE_ADMIN)
-                        .requestMatchers(HttpMethod.PUT, USERS_ID).hasAnyAuthority(ROLE_USER,ROLE_ADMIN)
-
-                        .requestMatchers(HttpMethod.GET, PAYMENT_CARDS_BY_USER).hasAnyAuthority(ROLE_USER,ROLE_ADMIN)
-                        .requestMatchers(HttpMethod.GET, PAYMENT_CARDS_BY_NUMBER).hasAnyAuthority(ROLE_USER,ROLE_ADMIN)
-                        .requestMatchers(HttpMethod.GET, PAYMENT_CARDS_ID).hasAnyAuthority(ROLE_USER,ROLE_ADMIN)
-
-                        .requestMatchers(HttpMethod.POST, PAYMENT_CARDS).hasAnyAuthority(ROLE_USER,ROLE_ADMIN)
-                        .requestMatchers(HttpMethod.PUT, PAYMENT_CARDS_ID).hasAnyAuthority(ROLE_USER,ROLE_ADMIN)
-                        .requestMatchers(HttpMethod.DELETE, PAYMENT_CARDS_ID).hasAnyAuthority(ROLE_USER,ROLE_ADMIN)
-                        .requestMatchers(HttpMethod.PATCH, PAYMENT_CARDS_ID_STATUS).hasAnyAuthority(ROLE_USER,ROLE_ADMIN)
 
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/users/**").hasAuthority(ROLE_ADMIN)
-                        .requestMatchers("/payment-cards/**").hasAuthority(ROLE_ADMIN)
 
-                        .anyRequest().authenticated()
+                        .requestMatchers(HttpMethod.GET, API_USERS).hasAuthority(ROLE_ADMIN)
+
+                        .requestMatchers(HttpMethod.POST, API_USERS).hasAuthority(ROLE_ADMIN)
+                        .requestMatchers(HttpMethod.DELETE, API_USERS_ID).hasAuthority(ROLE_ADMIN)
+                        .requestMatchers(HttpMethod.PATCH, API_USERS_ID_STATUS).hasAuthority(ROLE_ADMIN)
+
+                        .requestMatchers(HttpMethod.GET, API_PAYMENT_CARDS).hasAuthority(ROLE_ADMIN)
+
+                        .anyRequest().hasAnyAuthority(ROLE_USER, ROLE_ADMIN)
                 )
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint(entryPoint)
@@ -101,4 +94,3 @@ public class SecurityConfig {
         return http.build();
     }
 }
-
