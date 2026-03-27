@@ -74,17 +74,17 @@ public class SecurityConfig {
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         
-                        .requestMatchers(HttpMethod.GET, USERS_ID).hasAnyAuthority(ROLE_USER)
-                        .requestMatchers(HttpMethod.PUT, USERS_ID).hasAnyAuthority(ROLE_USER)
+                        .requestMatchers(HttpMethod.GET, USERS_ID).hasAnyAuthority(ROLE_USER,ROLE_ADMIN)
+                        .requestMatchers(HttpMethod.PUT, USERS_ID).hasAnyAuthority(ROLE_USER,ROLE_ADMIN)
 
-                        .requestMatchers(HttpMethod.GET, PAYMENT_CARDS_BY_USER).hasAnyAuthority(ROLE_USER)
-                        .requestMatchers(HttpMethod.GET, PAYMENT_CARDS_BY_NUMBER).hasAnyAuthority(ROLE_USER)
-                        .requestMatchers(HttpMethod.GET, PAYMENT_CARDS_ID).hasAnyAuthority(ROLE_USER)
+                        .requestMatchers(HttpMethod.GET, PAYMENT_CARDS_BY_USER).hasAnyAuthority(ROLE_USER,ROLE_ADMIN)
+                        .requestMatchers(HttpMethod.GET, PAYMENT_CARDS_BY_NUMBER).hasAnyAuthority(ROLE_USER,ROLE_ADMIN)
+                        .requestMatchers(HttpMethod.GET, PAYMENT_CARDS_ID).hasAnyAuthority(ROLE_USER,ROLE_ADMIN)
 
-                        .requestMatchers(HttpMethod.POST, PAYMENT_CARDS).hasAnyAuthority(ROLE_USER)
-                        .requestMatchers(HttpMethod.PUT, PAYMENT_CARDS_ID).hasAnyAuthority(ROLE_USER)
-                        .requestMatchers(HttpMethod.DELETE, PAYMENT_CARDS_ID).hasAnyAuthority(ROLE_USER)
-                        .requestMatchers(HttpMethod.PATCH, PAYMENT_CARDS_ID_STATUS).hasAnyAuthority(ROLE_USER)
+                        .requestMatchers(HttpMethod.POST, PAYMENT_CARDS).hasAnyAuthority(ROLE_USER,ROLE_ADMIN)
+                        .requestMatchers(HttpMethod.PUT, PAYMENT_CARDS_ID).hasAnyAuthority(ROLE_USER,ROLE_ADMIN)
+                        .requestMatchers(HttpMethod.DELETE, PAYMENT_CARDS_ID).hasAnyAuthority(ROLE_USER,ROLE_ADMIN)
+                        .requestMatchers(HttpMethod.PATCH, PAYMENT_CARDS_ID_STATUS).hasAnyAuthority(ROLE_USER,ROLE_ADMIN)
 
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/users/**").hasAuthority(ROLE_ADMIN)
