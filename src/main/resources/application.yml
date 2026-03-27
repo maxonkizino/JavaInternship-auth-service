@@ -27,4 +27,12 @@ jwt:
 cors:
   allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:8080}
 
+app:
+  security:
+    routes:
+      users: ${API_USERS_PATH:/api/users}
+      users-id: ${API_USERS_ID_PATH:/api/users/*}
+      users-status: ${API_USERS_STATUS_PATH:/api/users/*/status}
+      payment-cards: ${API_PAYMENT_CARDS_PATH:/api/payment-cards}
+
 
