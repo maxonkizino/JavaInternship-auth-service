@@ -136,7 +136,12 @@ class AuthServiceTest {
         JwtService.JwtPayload payload = new JwtService.JwtPayload(
                 555L, Roles.ROLE_USER, JwtTokenType.REFRESH, Instant.now(), Instant.now().plusSeconds(60)
         );
+        User user = new User();
+        user.setUserId(555L);
+        user.setActive(true);
+
         when(jwtService.parse("refresh-token")).thenReturn(payload);
+        when(userRepository.findByUserId(555L)).thenReturn(Optional.of(user));
         when(jwtService.generateAccessToken(555L, Roles.ROLE_USER)).thenReturn("new-access");
         when(jwtService.generateRefreshToken(555L, Roles.ROLE_USER)).thenReturn("new-refresh");
 
@@ -145,6 +150,22 @@ class AuthServiceTest {
         assertEquals("new-access", response.accessToken());
         assertEquals("new-refresh", response.refreshToken());
         verify(jwtService).ensureType(payload, JwtTokenType.REFRESH);
+    }
+
+    @Test
+    void refreshThrowsWhenUserInactive() {
+        JwtService.JwtPayload payload = new JwtService.JwtPayload(
+                555L, Roles.ROLE_USER, JwtTokenType.REFRESH, Instant.now(), Instant.now().plusSeconds(60)
+        );
+        User user = new User();
+        user.setUserId(555L);
+        user.setActive(false);
+
+        when(jwtService.parse("refresh-token")).thenReturn(payload);
+        when(userRepository.findByUserId(555L)).thenReturn(Optional.of(user));
+
+        assertThrows(BadCredentialsException.class,
+                () -> authService.refresh(new RefreshTokenRequest("refresh-token")));
     }
 }
 

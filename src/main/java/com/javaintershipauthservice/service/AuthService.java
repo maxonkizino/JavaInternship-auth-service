@@ -96,6 +96,12 @@ public class AuthService {
         JwtService.JwtPayload payload = jwtService.parse(request.refreshToken());
         jwtService.ensureType(payload, JwtTokenType.REFRESH);
 
+        User user = userRepository.findByUserId(payload.userId())
+                .orElseThrow(() -> new BadCredentialsException("Invalid refresh token"));
+        if (Boolean.FALSE.equals(user.getActive())) {
+            throw new BadCredentialsException("User is not active");
+        }
+
         String accessToken = jwtService.generateAccessToken(payload.userId(), payload.role());
         String refreshToken = jwtService.generateRefreshToken(payload.userId(), payload.role());
         return new TokenResponse(accessToken, refreshToken);
