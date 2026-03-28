@@ -1,5 +1,6 @@
-package com.javaintershipauthservice.controller;
+package com.javaintershipauthservice.controller.impl;
 
+import com.javaintershipauthservice.controller.AuthApi;
 import com.javaintershipauthservice.dto.request.LoginRequest;
 import com.javaintershipauthservice.dto.request.RefreshTokenRequest;
 import com.javaintershipauthservice.dto.request.RegisterRequest;

@@ -12,6 +12,7 @@ import com.javaintershipauthservice.model.User;
 import com.javaintershipauthservice.repository.RoleRepository;
 import com.javaintershipauthservice.repository.UserRepository;
 import com.javaintershipauthservice.security.JwtTokenType;
+import com.javaintershipauthservice.service.impl.AuthServiceImpl;
 import io.jsonwebtoken.JwtException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -48,7 +49,7 @@ class AuthServiceTest {
     private JwtService jwtService;
 
     @InjectMocks
-    private AuthService authService;
+    private AuthServiceImpl authService;
 
     @Test
     void loginSuccessReturnsTokensWithExternalUserId() {

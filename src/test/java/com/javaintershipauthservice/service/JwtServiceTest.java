@@ -3,6 +3,7 @@ package com.javaintershipauthservice.service;
 import com.javaintershipauthservice.config.JwtProperties;
 import com.javaintershipauthservice.model.Roles;
 import com.javaintershipauthservice.security.JwtTokenType;
+import com.javaintershipauthservice.service.impl.JwtServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -46,7 +47,7 @@ class JwtServiceTest {
         JwtProperties properties = new JwtProperties();
         properties.setSecret("short-secret");
 
-        JwtService testJwtService = new JwtService(properties);
+        JwtServiceImpl testJwtService = new JwtServiceImpl(properties);
 
         assertThrows(IllegalArgumentException.class, testJwtService::init);
     }
@@ -56,7 +57,7 @@ class JwtServiceTest {
     static class JwtServiceTestConfig {
         @Bean
         JwtService jwtService(JwtProperties jwtProperties) {
-            JwtService service = new JwtService(jwtProperties);
+            JwtServiceImpl service = new JwtServiceImpl(jwtProperties);
             service.init();
             return service;
         }
