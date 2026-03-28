@@ -7,6 +7,7 @@ import com.javaintershipauthservice.dto.request.ValidateTokenRequest;
 import com.javaintershipauthservice.dto.response.TokenResponse;
 import com.javaintershipauthservice.dto.response.ValidateTokenResponse;
 import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  * Public authentication API: login, credential registration, token validation and refresh, CSRF.
+ * All endpoints allow anonymous access via {@code @PreAuthorize("permitAll()")}.
  */
+@PreAuthorize("permitAll()")
 @RequestMapping("/auth")
 public interface AuthApi {
 

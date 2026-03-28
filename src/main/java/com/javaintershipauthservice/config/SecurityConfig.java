@@ -12,7 +12,6 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,7 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-@EnableConfigurationProperties({JwtProperties.class, SecurityRouteProperties.class})
+@EnableConfigurationProperties(JwtProperties.class)
 public class SecurityConfig {
 
     private static final String ROLE_USER = "ROLE_USER";
@@ -56,14 +55,8 @@ public class SecurityConfig {
             JwtAuthFilter jwtAuthFilter,
             RestAuthenticationEntryPoint entryPoint,
             RestAccessDeniedHandler accessDeniedHandler,
-            CsrfTokenRepository csrfTokenRepository,
-            SecurityRouteProperties routes
+            CsrfTokenRepository csrfTokenRepository
     ) {
-
-        final String users = routes.getUsers();
-        final String usersId = routes.getUsersId();
-        final String usersStatus = routes.getUsersStatus();
-        final String paymentCards = routes.getPaymentCards();
 
         http
                 .cors(Customizer.withDefaults())
@@ -72,16 +65,7 @@ public class SecurityConfig {
                 )
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-
                         .requestMatchers("/auth/**").permitAll()
-
-                        .requestMatchers(HttpMethod.GET, users).hasAuthority(ROLE_ADMIN)
-                        .requestMatchers(HttpMethod.POST, users).hasAuthority(ROLE_ADMIN)
-                        .requestMatchers(HttpMethod.DELETE, usersId).hasAuthority(ROLE_ADMIN)
-                        .requestMatchers(HttpMethod.PATCH, usersStatus).hasAuthority(ROLE_ADMIN)
-
-                        .requestMatchers(HttpMethod.GET, paymentCards).hasAuthority(ROLE_ADMIN)
-
                         .anyRequest().hasAnyAuthority(ROLE_USER, ROLE_ADMIN)
                 )
                 .exceptionHandling(ex -> ex
