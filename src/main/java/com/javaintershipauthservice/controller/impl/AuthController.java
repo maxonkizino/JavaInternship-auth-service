@@ -9,45 +9,42 @@ import com.javaintershipauthservice.dto.response.ValidateTokenResponse;
 import com.javaintershipauthservice.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.security.web.csrf.CsrfToken;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * HTTP adapter for {@link AuthApi}; delegates to {@link AuthService}.
+ */
 @RestController
-@RequestMapping("/auth")
 @RequiredArgsConstructor
-public class AuthController {
+public class AuthController implements AuthApi {
 
     private final AuthService authService;
 
-
-    @PostMapping("/login")
+    @Override
     public TokenResponse login(@Valid @RequestBody LoginRequest request) {
         return authService.login(request);
     }
 
-    @PostMapping("/credentials")
+    @Override
     public Long register(@Valid @RequestBody RegisterRequest request) {
         return authService.register(request);
     }
 
-    @PostMapping("/validate")
+    @Override
     public ValidateTokenResponse validate(@Valid @RequestBody ValidateTokenRequest request) {
         return authService.validate(request);
     }
 
-    @PostMapping("/refresh")
+    @Override
     public TokenResponse refresh(@Valid @RequestBody RefreshTokenRequest request) {
         return authService.refresh(request);
     }
 
-    @GetMapping("/csrf")
+    @Override
     public CsrfToken csrf(CsrfToken csrfToken) {
         return csrfToken;
     }
 }
-
