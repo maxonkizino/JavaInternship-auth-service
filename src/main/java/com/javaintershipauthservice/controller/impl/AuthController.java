@@ -26,26 +26,31 @@ public class AuthController implements AuthApi {
 
     @Override
     public TokenResponse login(@Valid @RequestBody LoginRequest request) {
+
         return authService.login(request);
     }
 
     @Override
     public Long register(@Valid @RequestBody RegisterRequest request) {
+
         return authService.register(request);
     }
 
     @Override
     public ValidateTokenResponse validate(@Valid @RequestBody ValidateTokenRequest request) {
+
         return authService.validate(request);
     }
 
     @Override
     public TokenResponse refresh(@Valid @RequestBody RefreshTokenRequest request) {
+
         return authService.refresh(request);
     }
 
     @Override
     public CsrfToken csrf(CsrfToken csrfToken) {
+
         return csrfToken;
     }
 }
