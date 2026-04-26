@@ -1,0 +1,25 @@
+# Локальная сборка auth-service для общего стека (корневой docker-compose.yml).
+services:
+  auth-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      - stack
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/auth_service
+      DB_USERNAME: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      ACCESS_TOKEN_EXPIRATION_MINUTES: ${ACCESS_TOKEN_EXPIRATION_MINUTES}
+      REFRESH_TOKEN_EXPIRATION_MINUTES: ${REFRESH_TOKEN_EXPIRATION_MINUTES}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
+    ports:
+      - "8082:8082"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+networks:
+  stack:
+    driver: bridge
