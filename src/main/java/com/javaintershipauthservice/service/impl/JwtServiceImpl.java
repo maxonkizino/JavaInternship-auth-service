@@ -96,7 +96,7 @@ public class JwtServiceImpl implements JwtService {
                 .claim(CLAIM_TYPE, type.name())
                 .issuedAt(issuedAt)
                 .expiration(exp)
-                .signWith(signingKey)
+                .signWith(signingKey, Jwts.SIG.HS256)
                 .compact();
     }
 }

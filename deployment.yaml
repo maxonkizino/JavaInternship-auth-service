@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: java-internship-auth-service
+  labels:
+    app: java-internship-auth-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: java-internship-auth-service
+  template:
+    metadata:
+      labels:
+        app: java-internship-auth-service
+    spec:
+      containers:
+        - name: java-internship-auth-service
+          image: maxononion/javainternship-auth-service:latest
+          ports:
+            - containerPort: 8082
+          env:
+            - name: DB_URL
+              value: ${DB_URL}
+            - name: DB_USERNAME
+              value: ${DB_USERNAME}
