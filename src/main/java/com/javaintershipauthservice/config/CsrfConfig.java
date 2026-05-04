@@ -13,4 +13,3 @@ public class CsrfConfig {
         return new CookieCsrfTokenRepository();
     }
 }
-

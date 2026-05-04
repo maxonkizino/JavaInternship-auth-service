@@ -20,7 +20,28 @@ spec:
           ports:
             - containerPort: 8082
           env:
-            - name: DB_URL
-              value: ${DB_URL}
-            - name: DB_USERNAME
-              value: ${DB_USERNAME}
+            - name: SPRING_PROFILES_ACTIVE
+              value: docker
+            - name: SERVER_PORT
+              value: "8082"
+          envFrom:
+            - secretRef:
+                name: java-internship-auth-service-secret
+          startupProbe:
+            tcpSocket:
+              port: 8082
+            failureThreshold: 36
+            periodSeconds: 10
+            timeoutSeconds: 5
+          readinessProbe:
+            tcpSocket:
+              port: 8082
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 5
+          livenessProbe:
+            tcpSocket:
+              port: 8082
+            periodSeconds: 45
+            timeoutSeconds: 5
+            failureThreshold: 4
