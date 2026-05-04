@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com</groupId>
-    <artifactId>Javainternship-auth-service</artifactId>
+    <artifactId>JavaInternship-auth-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>Javaintership-auth-service</name>
     <description>Javaintership-auth-service</description>

@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: java-internship-auth-service
+  labels:
+    app: java-internship-auth-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: java-internship-auth-service
+  template:
+    metadata:
+      labels:
+        app: java-internship-auth-service
+    spec:
+      containers:
+        - name: java-internship-auth-service
+          image: maxononion/javainternship-auth-service:latest
+          ports:
+            - containerPort: 8082
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: docker
+            - name: SERVER_PORT
+              value: "8082"
+          envFrom:
+            - secretRef:
+                name: java-internship-auth-service-secret
+          startupProbe:
+            tcpSocket:
+              port: 8082
+            failureThreshold: 36
+            periodSeconds: 10
+            timeoutSeconds: 5
+          readinessProbe:
+            tcpSocket:
+              port: 8082
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 5
+          livenessProbe:
+            tcpSocket:
+              port: 8082
+            periodSeconds: 45
+            timeoutSeconds: 5
+            failureThreshold: 4
